@@ -10,6 +10,7 @@ const circulationRepo = () => {
       const db = client.db(dbName);
 
       const results = await db.collection('newspapers').insertMany(data);
+      client.close();
       resolve(results);
     } catch (err) {
       console.log({ err });
