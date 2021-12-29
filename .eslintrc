@@ -1,0 +1,7 @@
+{
+    "extends": "airbnb",
+    "rules": {
+        "no-async-promise-executor": 0,
+        "no-console": 0
+    }
+}
