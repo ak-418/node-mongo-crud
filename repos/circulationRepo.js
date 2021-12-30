@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 
 const circulationRepo = () => {
   const url = 'mongodb://localhost:27017';
@@ -11,8 +11,8 @@ const circulationRepo = () => {
       const db = client.db(dbName);
 
       const results = await db.collection('newspapers').insertMany(data);
-      client.close();
       resolve(results);
+      client.close();
     } catch (err) {
       console.log({ err });
     }
@@ -31,13 +31,24 @@ const circulationRepo = () => {
         }
 
         resolve(await results.toArray());
+        client.close();
       } catch (error) {
         console.log('Error fetching', error);
       }
     });
   };
 
-  return { loadData, get };
+  const getById = (id) => {
+    const client = new MongoClient(url);
+    return new Promise(async (resolve) => {
+      await client.connect();
+      const db = client.db(dbName);
+      const results = db.collection('newspapers').findOne({ _id: ObjectID(id) });
+      resolve(results);
+      client.close();
+    });
+  };
+  return { loadData, get, getById };
 };
 
 module.exports = circulationRepo();
