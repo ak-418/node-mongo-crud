@@ -48,7 +48,21 @@ const circulationRepo = () => {
       client.close();
     });
   };
-  return { loadData, get, getById };
+
+  const addItem = (item) => {
+    const client = new MongoClient(url);
+    return new Promise(async (resolve) => {
+      await client.connect();
+      const db = client.db(dbName);
+      const result = await db.collection('newspapers').insertOne(item);
+      resolve(result.ops);
+      client.close();
+    });
+  };
+
+  return {
+    loadData, get, getById, addItem,
+  };
 };
 
 module.exports = circulationRepo();
