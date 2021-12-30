@@ -60,8 +60,19 @@ const circulationRepo = () => {
     });
   };
 
+  const updateItem = (id, updated) => {
+    const client = new MongoClient(url);
+    return new Promise(async (resolve) => {
+      await client.connect();
+      const db = client.db(dbName);
+      const result = await db.collection('newspapers').findOneAndReplace({ _id: ObjectID(id) }, updated, { returnOriginal: false });
+      resolve(result.value);
+      client.close();
+    });
+  };
+
   return {
-    loadData, get, getById, addItem,
+    loadData, get, getById, addItem, updateItem,
   };
 };
 

@@ -46,12 +46,18 @@ async function main() {
     const insertedItem = await circulationRepo.addItem(newItem);
     const insertedItemById = await circulationRepo.getById(insertedItem[0]._id);
     assert.deepEqual(newItem, insertedItemById);
+
+    // Update an newItem
+
+    await circulationRepo.updateItem(insertedItem[0]._id, { ...newItem, Newspaper: 'My modified thing' });
+    const updatedItemById = await circulationRepo.getById(insertedItem[0]._id);
+    assert.equal('My modified thing', updatedItemById.Newspaper);
   } catch (error) {
     console.log({ error });
   } finally {
-    const admin = client.db(dbName).admin();
+    // const admin = client.db(dbName).admin();
     await client.db(dbName).dropDatabase();
-    console.log(await admin.listDatabases());
+    // console.log(await admin.listDatabases());
     client.close();
   }
 }
