@@ -52,6 +52,10 @@ async function main() {
     await circulationRepo.updateItem(insertedItem[0]._id, { ...newItem, Newspaper: 'My modified thing' });
     const updatedItemById = await circulationRepo.getById(insertedItem[0]._id);
     assert.equal('My modified thing', updatedItemById.Newspaper);
+
+    // Remove an item
+    const removed = await circulationRepo.removeItem(insertedItem[0]._id);
+    assert(removed);
   } catch (error) {
     console.log({ error });
   } finally {

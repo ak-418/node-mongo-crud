@@ -40,39 +40,71 @@ const circulationRepo = () => {
 
   const getById = (id) => {
     const client = new MongoClient(url);
+
     return new Promise(async (resolve) => {
       await client.connect();
-      const db = client.db(dbName);
-      const results = db.collection('newspapers').findOne({ _id: ObjectID(id) });
-      resolve(results);
-      client.close();
+      try {
+        const db = client.db(dbName);
+        const results = db.collection('newspapers').findOne({ _id: ObjectID(id) });
+        resolve(results);
+        client.close();
+      } catch (error) {
+        console.log('Error fetching by id', error);
+      }
     });
   };
 
   const addItem = (item) => {
     const client = new MongoClient(url);
+
     return new Promise(async (resolve) => {
-      await client.connect();
-      const db = client.db(dbName);
-      const result = await db.collection('newspapers').insertOne(item);
-      resolve(result.ops);
-      client.close();
+      try {
+        await client.connect();
+        const db = client.db(dbName);
+        const result = await db.collection('newspapers').insertOne(item);
+        resolve(result.ops);
+        client.close();
+      } catch (error) {
+        console.log('Error deleting', error);
+      }
     });
   };
 
   const updateItem = (id, updated) => {
     const client = new MongoClient(url);
+
     return new Promise(async (resolve) => {
-      await client.connect();
-      const db = client.db(dbName);
-      const result = await db.collection('newspapers').findOneAndReplace({ _id: ObjectID(id) }, updated, { returnOriginal: false });
-      resolve(result.value);
-      client.close();
+      try {
+        await client.connect();
+        const db = client.db(dbName);
+        const result = await db.collection('newspapers').findOneAndReplace({ _id: ObjectID(id) }, updated, { returnOriginal: false });
+        resolve(result.value);
+        client.close();
+      } catch (error) {
+        console.log('Error deleting', error);
+      }
+    });
+  };
+
+  const removeItem = (id) => {
+    const client = new MongoClient(url);
+
+    return new Promise(async (resolve) => {
+      try {
+        await client.connect();
+
+        const db = client.db(dbName);
+        const result = await db.collection('newspapers').deleteOne({ _id: ObjectID(id) });
+        resolve(result.deletedCount === 1);
+        client.close();
+      } catch (error) {
+        console.log('Error deleting', error);
+      }
     });
   };
 
   return {
-    loadData, get, getById, addItem, updateItem,
+    loadData, get, getById, addItem, updateItem, removeItem,
   };
 };
 
