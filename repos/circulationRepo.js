@@ -3,6 +3,7 @@ const { MongoClient } = require('mongodb');
 const circulationRepo = () => {
   const url = 'mongodb://localhost:27017';
   const dbName = 'circulation';
+
   const loadData = (data) => new Promise(async (resolve) => {
     const client = new MongoClient(url);
     try {
@@ -17,7 +18,23 @@ const circulationRepo = () => {
     }
   });
 
-  return { loadData };
+  const get = () => {
+    const client = new MongoClient(url);
+
+    return new Promise(async (resolve) => {
+      try {
+        await client.connect();
+        const db = client.db(dbName);
+        const results = db.collection('newspapers').find();
+
+        resolve(await results.toArray());
+      } catch (error) {
+        console.log('Error fetching', error);
+      }
+    });
+  };
+
+  return { loadData, get };
 };
 
 module.exports = circulationRepo();
