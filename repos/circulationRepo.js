@@ -18,14 +18,17 @@ const circulationRepo = () => {
     }
   });
 
-  const get = () => {
+  const get = (query, limit) => {
     const client = new MongoClient(url);
 
     return new Promise(async (resolve) => {
       try {
         await client.connect();
         const db = client.db(dbName);
-        const results = db.collection('newspapers').find();
+        let results = db.collection('newspapers').find(query);
+        if (limit) {
+          results = results.limit(limit);
+        }
 
         resolve(await results.toArray());
       } catch (error) {
